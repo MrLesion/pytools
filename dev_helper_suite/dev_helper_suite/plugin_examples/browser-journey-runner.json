@@ -1,0 +1,14 @@
+{
+  "url": "http://127.0.0.1:8000",
+  "steps": [
+    {
+      "action": "wait_visible",
+      "selector": "body"
+    },
+    {
+      "action": "assert_count",
+      "selector": "body",
+      "value": 1
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "config_path": "plugin_examples/appsettings.json",
+  "environment": "production",
+  "rules": [
+    {
+      "key": "Debug",
+      "op": "equals",
+      "value": false
+    },
+    {
+      "key": "Api.BaseUrl",
+      "op": "not_contains",
+      "value": "localhost"
+    }
+  ]
+}

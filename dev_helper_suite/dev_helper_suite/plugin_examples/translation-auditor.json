@@ -1,0 +1,5 @@
+{
+  "source": "plugin_examples/translations.json",
+  "baseline_language": "en",
+  "templates_root": "plugin_examples/templates"
+}

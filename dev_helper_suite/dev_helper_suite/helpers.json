@@ -340,6 +340,498 @@
           "default": 20
         }
       ]
-    }
+    },
+    {
+      "id": "uptime-checker",
+      "name": "HTTP uptime checker",
+      "script_path": "helpers/uptime_checker.py",
+      "description": "Pingdom-style HTTP checks with response times, status validation and optional text matching. Follows redirects and verifies TLS certificates.",
+      "example_use": "Check your production homepage five times and flag unexpected status codes, missing content or responses exceeding 2000 ms.",
+      "code_example": "python helpers/uptime_checker.py --input params.json\n\nExample params.json:\n{\"url\":\"https://example.com\",\"attempts\":5,\"interval\":1,\"timeout\":15,\"expected_status\":200,\"expected_text\":\"Example Domain\",\"max_response_ms\":2000}",
+      "fields": [
+        {
+          "name": "url",
+          "label": "Website URL",
+          "type": "text",
+          "default": "https://example.com",
+          "required": true
+        },
+        {
+          "name": "attempts",
+          "label": "Samples (1–10)",
+          "type": "int",
+          "default": 3
+        },
+        {
+          "name": "interval",
+          "label": "Pause between samples (0–10 seconds)",
+          "type": "float",
+          "default": 1
+        },
+        {
+          "name": "timeout",
+          "label": "HTTP timeout (1–30 seconds)",
+          "type": "float",
+          "default": 15
+        },
+        {
+          "name": "expected_status",
+          "label": "Expected HTTP status",
+          "type": "int",
+          "default": 200
+        },
+        {
+          "name": "expected_text",
+          "label": "Expected page text (optional)",
+          "type": "text",
+          "default": ""
+        },
+        {
+          "name": "max_response_ms",
+          "label": "Maximum response time in ms (0 disables)",
+          "type": "float",
+          "default": 2000
+        }
+      ]
+    },
+    {
+    "id": "razor-template-finder",
+    "name": "Razor/template finder",
+    "script_path": "helpers/razor_template_finder.py",
+    "description": "Search Razor/HTML files and extract literal includes, URLs, field access and translation keys. Skips common dependency/build folders.",
+    "example_use": "Choose translations to list Translate(\"key\") calls, or search for a shared partial or custom product field.",
+    "code_example": "python cli.py razor-template-finder --input plugin_examples/razor-template-finder.json\n\n{\n  \"root\": \"plugin_examples/templates\",\n  \"mode\": \"translations\"\n}",
+    "fields": [
+      {
+        "name": "root",
+        "label": "Template folder",
+        "type": "path",
+        "default": "plugin_examples/templates",
+        "required": true
+      },
+      {
+        "name": "mode",
+        "label": "Search mode",
+        "type": "select",
+        "default": "search",
+        "options": [
+          "search",
+          "translations",
+          "includes",
+          "urls",
+          "fields"
+        ]
+      },
+      {
+        "name": "query",
+        "label": "Search text / optional extraction filter",
+        "type": "text",
+        "default": "Product"
+      },
+      {
+        "name": "patterns",
+        "label": "Filename patterns",
+        "type": "text",
+        "default": "*.cshtml,*.razor,*.html"
+      }
+    ],
+    "support_files": [
+      "helpers/dev_plugins_support.py"
+    ]
+  },
+  {
+    "id": "translation-auditor",
+    "name": "Translation auditor",
+    "script_path": "helpers/translation_auditor.py",
+    "description": "Compare exported translations across languages and optionally check literal template usage. Supports documented JSON, CSV and portable XML formats.",
+    "example_use": "Export translations to {\"en\":{\"key\":\"Text\"},\"da\":{\"key\":\"Tekst\"}}. Missing keys and empty values fail; potentially unused keys are warnings.",
+    "code_example": "python cli.py translation-auditor --input plugin_examples/translation-auditor.json\n\n{\n  \"source\": \"plugin_examples/translations.json\",\n  \"baseline_language\": \"en\",\n  \"templates_root\": \"plugin_examples/templates\"\n}",
+    "fields": [
+      {
+        "name": "source",
+        "label": "Translation export",
+        "type": "file",
+        "default": "plugin_examples/translations.json",
+        "required": true
+      },
+      {
+        "name": "baseline_language",
+        "label": "Baseline language",
+        "type": "text",
+        "default": "en"
+      },
+      {
+        "name": "templates_root",
+        "label": "Optional template folder",
+        "type": "path",
+        "default": "plugin_examples/templates"
+      }
+    ],
+    "support_files": [
+      "helpers/dev_plugins_support.py",
+      "helpers/razor_template_finder.py"
+    ]
+  },
+  {
+    "id": "deployment-config-checker",
+    "name": "Deployment configuration checker",
+    "script_path": "helpers/deployment_config_checker.py",
+    "description": "Check a configuration file against explicit rules. JSON, simple .env and XML appSettings/connectionStrings are supported. Configuration values are omitted from results.",
+    "example_use": "Create production rules for debug flags, API hosts and required settings. This checks a file, not merged runtime configuration.",
+    "code_example": "python cli.py deployment-config-checker --input plugin_examples/deployment-config-checker.json\n\n{\n  \"config_path\": \"plugin_examples/appsettings.json\",\n  \"environment\": \"production\",\n  \"rules\": [\n    {\n      \"key\": \"Debug\",\n      \"op\": \"equals\",\n      \"value\": false\n    },\n    {\n      \"key\": \"Api.BaseUrl\",\n      \"op\": \"not_contains\",\n      \"value\": \"localhost\"\n    }\n  ]\n}",
+    "fields": [
+      {
+        "name": "config_path",
+        "label": "Configuration file",
+        "type": "file",
+        "default": "plugin_examples/appsettings.json",
+        "required": true
+      },
+      {
+        "name": "environment",
+        "label": "Environment label",
+        "type": "text",
+        "default": "production"
+      },
+      {
+        "name": "rules",
+        "label": "Rules (JSON array; leave empty to use file)",
+        "type": "json",
+        "default": [
+          {
+            "key": "Debug",
+            "op": "equals",
+            "value": false
+          },
+          {
+            "key": "Api.BaseUrl",
+            "op": "not_contains",
+            "value": "localhost"
+          }
+        ]
+      },
+      {
+        "name": "rules_path",
+        "label": "Optional rules file",
+        "type": "file",
+        "default": ""
+      }
+    ],
+    "support_files": [
+      "helpers/dev_plugins_support.py"
+    ]
+  },
+  {
+    "id": "visual-regression-checker",
+    "name": "Visual regression checker",
+    "script_path": "helpers/visual_regression_checker.py",
+    "description": "Capture a full-page Chromium screenshot and compare pixels with an explicit baseline. Saves actual/baseline/difference PNGs. Baseline mode overwrites that named baseline.",
+    "example_use": "Create a baseline in your reference environment, then run compare with the same URL, name and viewport after changes. Mask dynamic content and use the same browser/OS/fonts.",
+    "code_example": "python cli.py visual-regression-checker --input plugin_examples/visual-regression-checker.json\n\n{\n  \"url\": \"http://127.0.0.1:8000\",\n  \"mode\": \"baseline\",\n  \"name\": \"homepage\"\n}",
+    "fields": [
+      {
+        "name": "mode",
+        "label": "Mode",
+        "type": "select",
+        "default": "compare",
+        "options": [
+          "compare",
+          "baseline"
+        ]
+      },
+      {
+        "name": "name",
+        "label": "Snapshot name",
+        "type": "text",
+        "default": "homepage"
+      },
+      {
+        "name": "url",
+        "label": "Page URL",
+        "type": "text",
+        "default": "http://127.0.0.1:8000",
+        "required": true
+      },
+      {
+        "name": "width",
+        "label": "Viewport width",
+        "type": "int",
+        "default": 1440
+      },
+      {
+        "name": "height",
+        "label": "Viewport height",
+        "type": "int",
+        "default": 900
+      },
+      {
+        "name": "timeout",
+        "label": "Action/navigation timeout (seconds)",
+        "type": "float",
+        "default": 15
+      },
+      {
+        "name": "ready_selector",
+        "label": "Optional ready selector",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "name": "output_dir",
+        "label": "Snapshot folder",
+        "type": "path",
+        "default": "plugin_reports/visual"
+      },
+      {
+        "name": "mask_selectors",
+        "label": "Mask selectors (JSON array)",
+        "type": "json",
+        "default": []
+      },
+      {
+        "name": "pixel_threshold",
+        "label": "Per-channel pixel threshold (0\u2013255)",
+        "type": "int",
+        "default": 16
+      },
+      {
+        "name": "allowed_difference_percent",
+        "label": "Allowed changed pixels (%)",
+        "type": "float",
+        "default": 0.1
+      }
+    ],
+    "support_files": [
+      "helpers/dev_plugins_support.py"
+    ]
+  },
+  {
+    "id": "browser-journey-runner",
+    "name": "Browser journey runner",
+    "script_path": "helpers/browser_journey_runner.py",
+    "description": "Run explicit browser actions and assertions, stopping at the first failure. JSON actions include navigation, filling, clicking and text/count/URL assertions.",
+    "example_use": "Use test accounts and a test environment for flows that change data. The included example only checks body visibility/count and does not submit anything.",
+    "code_example": "python cli.py browser-journey-runner --input plugin_examples/browser-journey-runner.json\n\n{\n  \"url\": \"http://127.0.0.1:8000\",\n  \"steps\": [\n    {\n      \"action\": \"wait_visible\",\n      \"selector\": \"body\"\n    },\n    {\n      \"action\": \"assert_count\",\n      \"selector\": \"body\",\n      \"value\": 1\n    }\n  ]\n}",
+    "fields": [
+      {
+        "name": "url",
+        "label": "Initial URL (optional)",
+        "type": "text",
+        "default": "http://127.0.0.1:8000"
+      },
+      {
+        "name": "steps",
+        "label": "Journey steps (JSON array)",
+        "type": "json",
+        "default": [
+          {
+            "action": "wait_visible",
+            "selector": "body"
+          },
+          {
+            "action": "assert_count",
+            "selector": "body",
+            "value": 1
+          }
+        ],
+        "required": true
+      },
+      {
+        "name": "timeout",
+        "label": "Action/navigation timeout (seconds)",
+        "type": "float",
+        "default": 15
+      },
+      {
+        "name": "show_browser",
+        "label": "Show browser",
+        "type": "bool",
+        "default": false
+      },
+      {
+        "name": "fail_on_page_errors",
+        "label": "Fail on uncaught JavaScript errors",
+        "type": "bool",
+        "default": true
+      }
+    ],
+    "support_files": [
+      "helpers/dev_plugins_support.py"
+    ]
+  },
+  {
+    "id": "accessibility-checker",
+    "name": "Accessibility checker",
+    "script_path": "helpers/accessibility_checker.py",
+    "description": "Run local axe-core against the loaded page. Returns violations, affected selectors, help links and incomplete checks requiring manual review.",
+    "example_use": "Install optional browser requirements and axe-core, then audit each important page/state. Automated results are not a WCAG certification.",
+    "code_example": "python cli.py accessibility-checker --input plugin_examples/accessibility-checker.json\n\n{\n  \"url\": \"http://127.0.0.1:8000\",\n  \"tags\": [\n    \"wcag2a\",\n    \"wcag2aa\",\n    \"wcag21a\",\n    \"wcag21aa\"\n  ]\n}",
+    "fields": [
+      {
+        "name": "url",
+        "label": "Page URL",
+        "type": "text",
+        "default": "http://127.0.0.1:8000",
+        "required": true
+      },
+      {
+        "name": "width",
+        "label": "Viewport width",
+        "type": "int",
+        "default": 1440
+      },
+      {
+        "name": "height",
+        "label": "Viewport height",
+        "type": "int",
+        "default": 900
+      },
+      {
+        "name": "timeout",
+        "label": "Action/navigation timeout (seconds)",
+        "type": "float",
+        "default": 15
+      },
+      {
+        "name": "ready_selector",
+        "label": "Optional ready selector",
+        "type": "text",
+        "default": ""
+      },
+      {
+        "name": "axe_path",
+        "label": "Local axe.min.js",
+        "type": "file",
+        "default": "plugin_vendor/node_modules/axe-core/axe.min.js"
+      },
+      {
+        "name": "tags",
+        "label": "Axe rule tags",
+        "type": "json",
+        "default": [
+          "wcag2a",
+          "wcag2aa",
+          "wcag21a",
+          "wcag21aa"
+        ]
+      }
+    ],
+    "support_files": [
+      "helpers/dev_plugins_support.py"
+    ]
+  },
+  {
+    "id": "link-asset-crawler",
+    "name": "Link and asset crawler",
+    "script_path": "helpers/link_asset_crawler.py",
+    "description": "Check bounded same-origin links/assets referenced in server HTML. Reports broken requests and redirects. Excludes JavaScript routes, CSS URLs, srcset and external origins.",
+    "example_use": "Start at a staging homepage with a small URL limit. Only crawl routes you intend to request; exclude sites with state-changing GET links.",
+    "code_example": "python cli.py link-asset-crawler --input plugin_examples/link-asset-crawler.json\n\n{\n  \"url\": \"http://127.0.0.1:8000\",\n  \"max_urls\": 20\n}",
+    "fields": [
+      {
+        "name": "url",
+        "label": "Start URL",
+        "type": "text",
+        "default": "http://127.0.0.1:8000",
+        "required": true
+      },
+      {
+        "name": "max_urls",
+        "label": "Maximum distinct URLs (1\u2013500)",
+        "type": "int",
+        "default": 50
+      },
+      {
+        "name": "timeout",
+        "label": "Timeout per request (seconds)",
+        "type": "float",
+        "default": 10
+      }
+    ],
+    "support_files": [
+      "helpers/dev_plugins_support.py"
+    ]
+  },
+  {
+    "id": "webhook-inbox",
+    "name": "Webhook inbox",
+    "script_path": "helpers/webhook_inbox.py",
+    "description": "Temporarily listen on 127.0.0.1 and capture request headers/bodies. Responds with HTTP 202. Results appear after the capture window ends or the request limit is reached.",
+    "example_use": "Click Run helper, then POST to http://127.0.0.1:8765 from another application. For remote senders configure your own tunnel. Exported bodies/query strings may contain sensitive information.",
+    "code_example": "python cli.py webhook-inbox --input plugin_examples/webhook-inbox.json\n\n{\n  \"port\": 8765,\n  \"duration\": 30,\n  \"max_requests\": 10\n}",
+    "fields": [
+      {
+        "name": "port",
+        "label": "Local port",
+        "type": "int",
+        "default": 8765
+      },
+      {
+        "name": "duration",
+        "label": "Capture window (1\u2013300 seconds)",
+        "type": "float",
+        "default": 30
+      },
+      {
+        "name": "max_requests",
+        "label": "Stop after requests (1\u2013100)",
+        "type": "int",
+        "default": 10
+      }
+    ],
+    "support_files": [
+      "helpers/dev_plugins_support.py"
+    ]
+  },
+  {
+    "id": "release-report-builder",
+    "name": "Release report builder",
+    "script_path": "helpers/release_report_builder.py",
+    "description": "Combine a verified local Git commit range and exported helper summaries into a Markdown report. Optionally write a .md file; otherwise return Markdown in the JSON result.",
+    "example_use": "Point at your repository, choose release refs, and provide report file paths exported from other helpers. Check report freshness yourself.",
+    "code_example": "python cli.py release-report-builder --input plugin_examples/release-report-builder.json\n\n{\n  \"repo_path\": \".\",\n  \"base_ref\": \"HEAD~1\",\n  \"head_ref\": \"HEAD\",\n  \"report_files\": []\n}",
+    "fields": [
+      {
+        "name": "repo_path",
+        "label": "Git repository",
+        "type": "path",
+        "default": ".",
+        "required": true
+      },
+      {
+        "name": "base_ref",
+        "label": "Base Git ref",
+        "type": "text",
+        "default": "HEAD~1"
+      },
+      {
+        "name": "head_ref",
+        "label": "Head Git ref",
+        "type": "text",
+        "default": "HEAD"
+      },
+      {
+        "name": "title",
+        "label": "Report title",
+        "type": "text",
+        "default": "Release report"
+      },
+      {
+        "name": "report_files",
+        "label": "Exported helper report paths",
+        "type": "json",
+        "default": []
+      },
+      {
+        "name": "output_path",
+        "label": "Optional Markdown output path",
+        "type": "text",
+        "default": ""
+      }
+    ],
+    "support_files": [
+      "helpers/dev_plugins_support.py"
+    ]
+  }
   ]
 }

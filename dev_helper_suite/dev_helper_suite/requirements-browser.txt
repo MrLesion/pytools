@@ -1,2 +1,4 @@
-# Optional: only needed for live tracking capture
+# Browser journeys, visual regression and accessibility
 playwright>=1.40,<2
+# Pixel comparisons for visual regression
+Pillow>=10,<14

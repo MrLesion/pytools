@@ -1,0 +1,6 @@
+{
+  "repo_path": ".",
+  "base_ref": "HEAD~1",
+  "head_ref": "HEAD",
+  "report_files": []
+}

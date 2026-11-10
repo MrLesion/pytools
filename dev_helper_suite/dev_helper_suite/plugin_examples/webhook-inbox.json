@@ -1,0 +1,5 @@
+{
+  "port": 8765,
+  "duration": 30,
+  "max_requests": 10
+}
