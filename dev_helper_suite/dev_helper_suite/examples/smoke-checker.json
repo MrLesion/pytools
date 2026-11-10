@@ -1,0 +1,8 @@
+{
+  "urls": [
+    "https://example.com"
+  ],
+  "expected_status": 200,
+  "expected_text": "Example Domain",
+  "timeout": 15
+}

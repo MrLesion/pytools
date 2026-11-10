@@ -1,0 +1,9 @@
+{
+  "left": "examples/api-left.json",
+  "right": "examples/api-right.json",
+  "array_key": "id",
+  "ignore": [
+    "updatedAt"
+  ],
+  "tolerance": 0
+}

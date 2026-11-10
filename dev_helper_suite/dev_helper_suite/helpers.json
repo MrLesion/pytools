@@ -1,0 +1,345 @@
+{
+  "version": 1,
+  "helpers": [
+    {
+      "id": "smoke-checker",
+      "name": "Website smoke checker",
+      "script_path": "helpers/smoke_checker.py",
+      "description": "Check HTTP status, final URL, response time and expected text in server HTML. JavaScript is not executed.",
+      "example_use": "After a deployment, check your homepage, product page and checkout entry URL.",
+      "code_example": "python cli.py smoke-checker --input examples/smoke-checker.json\n\n# JSON inputs\n{\n  \"urls\": [\n    \"https://example.com\"\n  ],\n  \"expected_status\": 200,\n  \"expected_text\": \"Example Domain\",\n  \"timeout\": 15\n}",
+      "fields": [
+        {
+          "name": "urls",
+          "label": "URLs (one per line)",
+          "type": "multiline",
+          "default": "https://example.com",
+          "required": true
+        },
+        {
+          "name": "expected_status",
+          "label": "Expected status",
+          "type": "int",
+          "default": 200
+        },
+        {
+          "name": "expected_text",
+          "label": "Expected text",
+          "type": "text",
+          "default": ""
+        },
+        {
+          "name": "timeout",
+          "label": "Timeout per URL (seconds)",
+          "type": "float",
+          "default": 15
+        }
+      ]
+    },
+    {
+      "id": "log-investigator",
+      "name": "Log investigator",
+      "script_path": "helpers/log_investigator.py",
+      "description": "Group warning and error records from .NET/plain-text or JSON logs. Preserve multiline stack traces and normalize numeric IDs for grouping.",
+      "example_use": "Find the most frequent exceptions in an IIS application log folder.",
+      "code_example": "python cli.py log-investigator --input examples/log-investigator.json\n\n# JSON inputs\n{\n  \"path\": \"examples/sample.log\"\n}",
+      "fields": [
+        {
+          "name": "path",
+          "label": "Log file or folder",
+          "type": "path",
+          "default": "examples/sample.log",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "tracking-inspector",
+      "name": "Tracking inspector",
+      "script_path": "helpers/tracking_inspector.py",
+      "description": "Inspect saved dataLayer events or capture a fresh Chromium session. Validate ecommerce fields and flag potential duplicate product views. Browser capture requires Playwright.",
+      "example_use": "Leave Source file empty, enter a product URL, and interact with the browser during capture. Or inspect the included sample offline. This checks dataLayer, not GA4 delivery.",
+      "code_example": "python cli.py tracking-inspector --input examples/tracking-inspector.json\n\n# JSON inputs\n{\n  \"source\": \"examples/tracking.json\"\n}",
+      "fields": [
+        {
+          "name": "source",
+          "label": "Saved events JSON (optional)",
+          "type": "file",
+          "default": "examples/tracking.json"
+        },
+        {
+          "name": "url",
+          "label": "URL for browser capture",
+          "type": "text",
+          "default": "https://example.com"
+        },
+        {
+          "name": "capture_seconds",
+          "label": "Capture duration (seconds)",
+          "type": "int",
+          "default": 20
+        },
+        {
+          "name": "show_browser",
+          "label": "Show interactive browser",
+          "type": "bool",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "feed-auditor",
+      "name": "Product feed auditor",
+      "script_path": "helpers/feed_auditor.py",
+      "description": "Validate JSON, CSV or XML product feeds for required IDs/names, duplicate IDs, prices, currency and image URL syntax. Map your feed fields below.",
+      "example_use": "Audit an exported Google Merchant XML feed with xml_item=item, or a JSON API export with items_path=data.products.",
+      "code_example": "python cli.py feed-auditor --input examples/feed-auditor.json\n\n# JSON inputs\n{\n  \"source\": \"examples/products.json\"\n}",
+      "fields": [
+        {
+          "name": "source",
+          "label": "File or HTTP(S) URL",
+          "type": "file",
+          "default": "examples/products.json",
+          "required": true
+        },
+        {
+          "name": "format",
+          "label": "Format",
+          "type": "select",
+          "default": "auto",
+          "options": [
+            "auto",
+            "json",
+            "csv",
+            "xml"
+          ]
+        },
+        {
+          "name": "items_path",
+          "label": "JSON items path",
+          "type": "text",
+          "default": ""
+        },
+        {
+          "name": "xml_item",
+          "label": "XML item tag",
+          "type": "text",
+          "default": "item"
+        },
+        {
+          "name": "delimiter",
+          "label": "CSV delimiter",
+          "type": "text",
+          "default": ","
+        },
+        {
+          "name": "id_field",
+          "label": "ID field",
+          "type": "text",
+          "default": "id"
+        },
+        {
+          "name": "name_field",
+          "label": "Name field",
+          "type": "text",
+          "default": "title"
+        },
+        {
+          "name": "price_field",
+          "label": "Price field",
+          "type": "text",
+          "default": "price"
+        },
+        {
+          "name": "currency_field",
+          "label": "Currency field",
+          "type": "text",
+          "default": "currency"
+        },
+        {
+          "name": "image_field",
+          "label": "Image field",
+          "type": "text",
+          "default": "image_link"
+        }
+      ]
+    },
+    {
+      "id": "test-data-generator",
+      "name": "Test data generator",
+      "script_path": "helpers/test_data_generator.py",
+      "description": "Generate deterministic synthetic products, customers or orders. Order mode includes linked customer/product tables. Export the result as JSON.",
+      "example_use": "Create 100 sample orders with valid customer/product references using a fixed seed for reproducibility.",
+      "code_example": "python cli.py test-data-generator --input examples/test-data-generator.json\n\n# JSON inputs\n{\n  \"kind\": \"orders\",\n  \"count\": 10,\n  \"seed\": 42\n}",
+      "fields": [
+        {
+          "name": "kind",
+          "label": "Record type",
+          "type": "select",
+          "default": "products",
+          "options": [
+            "products",
+            "customers",
+            "orders"
+          ]
+        },
+        {
+          "name": "count",
+          "label": "Record count (1\u201310000)",
+          "type": "int",
+          "default": 10
+        },
+        {
+          "name": "seed",
+          "label": "Random seed",
+          "type": "int",
+          "default": 42
+        }
+      ]
+    },
+    {
+      "id": "api-comparer",
+      "name": "API response comparer",
+      "script_path": "helpers/api_comparer.py",
+      "description": "Compare local JSON files or HTTP GET responses. Ignore fields, match object arrays by ID and apply an absolute numeric tolerance. Duplicate array IDs are reported as input errors.",
+      "example_use": "Compare staging/production product responses while ignoring updatedAt and matching products by id. Headers are sent to both URLs; use only endpoints you trust.",
+      "code_example": "python cli.py api-comparer --input examples/api-comparer.json\n\n# JSON inputs\n{\n  \"left\": \"examples/api-left.json\",\n  \"right\": \"examples/api-right.json\",\n  \"array_key\": \"id\",\n  \"ignore\": [\n    \"updatedAt\"\n  ],\n  \"tolerance\": 0\n}",
+      "fields": [
+        {
+          "name": "left",
+          "label": "Left file or URL",
+          "type": "file",
+          "default": "examples/api-left.json",
+          "required": true
+        },
+        {
+          "name": "right",
+          "label": "Right file or URL",
+          "type": "file",
+          "default": "examples/api-right.json",
+          "required": true
+        },
+        {
+          "name": "array_key",
+          "label": "Array identity field",
+          "type": "text",
+          "default": "id"
+        },
+        {
+          "name": "ignore",
+          "label": "Ignored fields (comma separated)",
+          "type": "text",
+          "default": "updatedAt"
+        },
+        {
+          "name": "tolerance",
+          "label": "Absolute numeric tolerance",
+          "type": "float",
+          "default": 0
+        },
+        {
+          "name": "headers",
+          "label": "HTTP headers (JSON object)",
+          "type": "json",
+          "default": {}
+        }
+      ]
+    },
+    {
+      "id": "json-validator",
+      "name": "JSON validator",
+      "script_path": "helpers/json_validator.py",
+      "description": "Validate JSON syntax with line/column diagnostics, duplicate-key checks and optional formatting. Accepts pasted content, HTTP(S) URLs or files. No JSON Schema validation.",
+      "example_use": "Paste an API response and click Run helper. To fetch a document, select url mode and enter its HTTP(S) address. Only the selected input mode is read.",
+      "code_example": "python cli.py json-validator --input examples/json-validator.json\n\n# Pasted content\n{\n  \"mode\": \"input\",\n  \"content\": \"{\\n  \\\"id\\\": \\\"P001\\\",\\n  \\\"price\\\": 149.95\\n}\"\n}\n\n# URL mode\n{\n  \"mode\": \"url\",\n  \"url\": \"https://example.com/data.json\"\n}",
+      "fields": [
+        {
+          "name": "mode",
+          "label": "Input mode",
+          "type": "select",
+          "default": "input",
+          "options": [
+            "input",
+            "url",
+            "file"
+          ]
+        },
+        {
+          "name": "content",
+          "label": "Paste JSON content",
+          "type": "multiline",
+          "default": "{\n  \"id\": \"P001\",\n  \"price\": 149.95\n}"
+        },
+        {
+          "name": "url",
+          "label": "URL (URL mode only)",
+          "type": "text",
+          "default": ""
+        },
+        {
+          "name": "path",
+          "label": "File (file mode only)",
+          "type": "file",
+          "default": ""
+        },
+        {
+          "name": "timeout",
+          "label": "HTTP timeout (seconds)",
+          "type": "float",
+          "default": 20
+        },
+        {
+          "name": "format_output",
+          "label": "Include formatted JSON",
+          "type": "bool",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "xml-validator",
+      "name": "XML validator",
+      "script_path": "helpers/xml_validator.py",
+      "description": "Validate XML well-formedness with line/column diagnostics and element statistics. Accepts pasted content, HTTP(S) URLs or files. DTDs and XSD validation are not supported.",
+      "example_use": "Paste an API response and click Run helper. To fetch a document, select url mode and enter its HTTP(S) address. Only the selected input mode is read.",
+      "code_example": "python cli.py xml-validator --input examples/xml-validator.json\n\n# Pasted content\n{\n  \"mode\": \"input\",\n  \"content\": \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<products>\\n  <product id=\\\"P001\\\"><price>149.95</price></product>\\n</products>\"\n}\n\n# URL mode\n{\n  \"mode\": \"url\",\n  \"url\": \"https://example.com/data.xml\"\n}",
+      "fields": [
+        {
+          "name": "mode",
+          "label": "Input mode",
+          "type": "select",
+          "default": "input",
+          "options": [
+            "input",
+            "url",
+            "file"
+          ]
+        },
+        {
+          "name": "content",
+          "label": "Paste XML content",
+          "type": "multiline",
+          "default": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<products>\n  <product id=\"P001\"><price>149.95</price></product>\n</products>"
+        },
+        {
+          "name": "url",
+          "label": "URL (URL mode only)",
+          "type": "text",
+          "default": ""
+        },
+        {
+          "name": "path",
+          "label": "File (file mode only)",
+          "type": "file",
+          "default": ""
+        },
+        {
+          "name": "timeout",
+          "label": "HTTP timeout (seconds)",
+          "type": "float",
+          "default": 20
+        }
+      ]
+    }
+  ]
+}

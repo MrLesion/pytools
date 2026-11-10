@@ -1,0 +1,20 @@
+[
+  {
+    "ecommerce": null
+  },
+  {
+    "event": "view_item",
+    "ecommerce": {
+      "currency": "DKK",
+      "value": 149.95,
+      "items": [
+        {
+          "item_id": "P001",
+          "item_name": "Test Shirt",
+          "price": 149.95,
+          "quantity": 1
+        }
+      ]
+    }
+  }
+]

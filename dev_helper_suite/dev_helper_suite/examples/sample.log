@@ -1,0 +1,7 @@
+2026-11-10 10:00:00 [ERR] Product 123 failed
+System.InvalidOperationException: Example failure
+   at Demo.Products.Load() in Products.cs:line 42
+2026-11-10 10:01:00 [ERR] Product 456 failed
+System.InvalidOperationException: Example failure
+   at Demo.Products.Load() in Products.cs:line 42
+2026-11-10 10:02:00 [WRN] Retry queue contains 3 records

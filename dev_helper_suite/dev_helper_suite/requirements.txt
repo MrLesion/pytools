@@ -1,0 +1,2 @@
+# Core app and all offline helpers use Python's standard library.
+# No pip packages are required. Python 3.10+ and Tkinter must be installed.

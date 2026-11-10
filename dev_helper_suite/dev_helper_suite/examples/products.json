@@ -1,0 +1,15 @@
+[
+  {
+    "id": "P001",
+    "title": "Test Shirt",
+    "price": "149.95 DKK",
+    "image_link": "https://example.com/shirt.jpg"
+  },
+  {
+    "id": "P002",
+    "title": "Test Jacket",
+    "price": 349.95,
+    "currency": "DKK",
+    "image_link": "https://example.com/jacket.jpg"
+  }
+]

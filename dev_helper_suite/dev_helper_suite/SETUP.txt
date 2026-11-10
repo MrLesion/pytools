@@ -1,0 +1,35 @@
+PIP & SETUP
+===========
+
+Python 3.10+ is required. Tkinter is provided by your Python/OS installation;
+it cannot be installed with pip.
+
+WINDOWS
+  install.bat              Create .venv and install core requirements
+  install.bat --browser    Also install Playwright and Chromium
+  start.bat                Launch using .venv when available
+
+macOS / LINUX
+  ./install.sh
+  ./install.sh --browser
+  ./start.sh
+
+Core requirements.txt has no third-party packages: all eight offline helpers
+and the desktop app use Python's standard library.
+requirements-browser.txt adds Playwright for live tracking capture.
+requirements-all.txt includes both requirement sets.
+
+MANUAL PIP INSTALL (after activating your preferred virtual environment)
+  python -m pip install -r requirements.txt
+  python -m pip install -r requirements-all.txt
+  python -m playwright install chromium
+
+The last two commands enable browser capture. Pip alone does not download the
+Chromium binary. Linux may also require browser OS dependencies.
+
+Linux: install your distribution's python3-tk / python3-venv packages if absent.
+Windows: enable Tcl/Tk and the Python launcher in the Python installer.
+macOS: use a Python installation that includes Tkinter.
+
+Install scripts stop on errors. A failed browser setup can leave a usable core
+virtual environment; rerun with --browser after resolving the error.

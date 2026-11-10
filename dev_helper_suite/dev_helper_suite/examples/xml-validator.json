@@ -1,0 +1,4 @@
+{
+  "mode": "input",
+  "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<products>\n  <product id=\"P001\"><price>149.95</price></product>\n</products>"
+}
